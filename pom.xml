@@ -16,11 +16,45 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<graphql.version>12.0.0</graphql.version>
 		<pmd.version>3.11.0</pmd.version>
+		<graphql.version>11.0.0</graphql.version>
+		<!-- 16.0.0 not on central -->
+		<graphql.extended.scalars.version>15.0.0</graphql.extended.scalars.version>
+		<graphql.extended.validation.version>16.0.0</graphql.extended.validation.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.graphql-java-kickstart</groupId>
+			<artifactId>graphql-spring-boot-starter</artifactId>
+			<version>${graphql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.graphql-java</groupId>
+			<artifactId>graphql-java-extended-scalars</artifactId>
+			<version>${graphql.extended.scalars.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.graphql-java</groupId>
+					<artifactId>graphql-java</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.graphql-java</groupId>
+			<artifactId>graphql-java-extended-validation</artifactId>
+			<version>${graphql.extended.validation.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.graphql-java</groupId>
+					<artifactId>graphql-java</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -28,24 +62,42 @@
 		</dependency>
 		<dependency>
 			<groupId>com.graphql-java-kickstart</groupId>
-			<artifactId>graphql-spring-boot-starter</artifactId>
+			<artifactId>playground-spring-boot-starter</artifactId>
 			<version>${graphql.version}</version>
+			<scope>runtime</scope>
 		</dependency>
-
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<groupId>com.graphql-java-kickstart</groupId>
+			<artifactId>voyager-spring-boot-starter</artifactId>
+			<version>${graphql.version}</version>
+			<scope>runtime</scope>
 		</dependency>
-
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.graphql-java-kickstart</groupId>
+			<artifactId>graphql-spring-boot-starter-test</artifactId>
+			<version>${graphql.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -55,6 +107,24 @@
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/it/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -84,6 +154,10 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<testResources>
+			<testResource>
+				<directory>src/it/resources</directory>
+			</testResource>
+		</testResources>
 	</build>
-
 </project>
